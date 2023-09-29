@@ -1,8 +1,16 @@
 diff --git a/configure b/configure
-index 648ac49..a43d024 100755
+index 648ac49..0ed1591 100755
 --- a/configure
 +++ b/configure
-@@ -19466,7 +19466,7 @@ $as_echo "$as_me: WARNING: Could not determine deployment target from SDKSetting
+@@ -1228,7 +1228,6 @@ enable_logwin
+ enable_logdialog
+ enable_mdi
+ enable_mdidoc
+-enable_mediactrl
+ enable_gstreamer8
+ enable_richtext
+ enable_postscript
+@@ -19466,7 +19465,7 @@ $as_echo "$as_me: WARNING: Could not determine deployment target from SDKSetting
          wxUSE_MACOSX_VERSION_MIN=
      fi
  elif test "x$wxUSE_MACOSX_VERSION_MIN" = "x"; then
@@ -11,7 +19,7 @@ index 648ac49..a43d024 100755
  fi
  
  if test "x$MACOSX_SDK_OPTS" != "x"; then
-@@ -42941,4 +42941,3 @@ echo "                                       libmspack          ${wxUSE_LIBMSPAC
+@@ -42941,4 +42940,3 @@ echo "                                       libmspack          ${wxUSE_LIBMSPAC
  echo "                                       sdl                ${wxUSE_LIBSDL}"
  
  echo ""

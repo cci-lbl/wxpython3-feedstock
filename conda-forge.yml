@@ -1,3 +1,5 @@
+azure:
+  store_build_artifacts: True
 conda_build:
   pkg_format: None
 github:

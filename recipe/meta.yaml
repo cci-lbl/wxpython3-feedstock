@@ -8,6 +8,7 @@ source:
   patches:
     - bitmap.patch
     - dataobj.patch
+    - mediactrl.patch
     - minmacos.patch
     - minmacos2.patch
 

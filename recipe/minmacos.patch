@@ -1,7 +1,7 @@
 diff --git a/configure.in b/configure.in
 index f6b5875..1e0dc5d 100644
---- a/./configure.in
-+++ b/../../wxPython-src-3.0.2.0/configure.in
+--- a/configure.in
++++ b/configure.in
 @@ -1205,7 +1205,7 @@ if test "x$wxUSE_MACOSX_SDK" = "xno"; then
      wxUSE_MACOSX_SDK=
  elif test "x$wxUSE_MACOSX_SDK" = "xyes"; then

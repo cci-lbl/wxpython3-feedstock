@@ -1,7 +1,7 @@
 diff --git a/configure b/configure
 index 648ac49..a43d024 100755
---- a/./configure
-+++ b/../../wxPython-src-3.0.2.0/configure
+--- a/configure
++++ b/configure
 @@ -19466,7 +19466,7 @@ $as_echo "$as_me: WARNING: Could not determine deployment target from SDKSetting
          wxUSE_MACOSX_VERSION_MIN=
      fi

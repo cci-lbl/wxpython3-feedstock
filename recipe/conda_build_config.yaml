@@ -1,3 +1,7 @@
+c_compiler_version:            # [unix]
+  - 9                          # [osx]
+c_compiler_version:            # [unix]
+  - 9                          # [osx]
 python:
   - 2.7.* *_cpython
 python_impl:

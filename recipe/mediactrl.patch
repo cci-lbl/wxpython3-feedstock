@@ -1,5 +1,5 @@
 diff --git a/build/tools/build-wxwidgets.py b/build/tools/build-wxwidgets.py
-index 7777b40..bab956d 100755
+index 7777b40..7fd3c1e 100755
 --- a/build/tools/build-wxwidgets.py
 +++ b/build/tools/build-wxwidgets.py
 @@ -46,7 +46,7 @@ def numCPUs():
@@ -182,15 +182,16 @@ index 7777b40..bab956d 100755
          if options.gtk3:
              configure_opts.append("--with-gtk=3")
  
-@@ -271,7 +271,6 @@ def main(scriptName, args):
+@@ -271,7 +271,7 @@ def main(scriptName, args):
                              "--with-opengl",
                              "--enable-sound",
                              "--enable-graphics_ctx",
 -                            "--enable-mediactrl",
++                            "--disable-mediactrl",
                              "--enable-display",
                              "--enable-geometry",
                              "--enable-debug_flag",
-@@ -298,7 +297,7 @@ def main(scriptName, args):
+@@ -298,7 +298,7 @@ def main(scriptName, args):
                      xcodePath+"/SDKs/MacOSX10.7.sdk",
                      xcodePath+"/SDKs/MacOSX10.8.sdk",
                      ]
@@ -199,7 +200,7 @@ index 7777b40..bab956d 100755
                  # use the lowest available sdk
                  for sdk in sdks:
                      if os.path.exists(sdk):
-@@ -312,8 +311,8 @@ def main(scriptName, args):
+@@ -312,8 +312,8 @@ def main(scriptName, args):
              if prefixDir:
                  prefixDir = os.path.abspath(prefixDir)
                  configure_opts.append("--prefix=" + prefixDir)
@@ -210,7 +211,7 @@ index 7777b40..bab956d 100755
          if options.wxpython:
              configure_opts.extend(wxpy_configure_opts)
              if options.debug:
-@@ -321,16 +320,16 @@ def main(scriptName, args):
+@@ -321,16 +321,16 @@ def main(scriptName, args):
                  configure_opts.append("--enable-debug_gdb")
                  configure_opts.append("--disable-optimise")
                  configure_opts.remove("--enable-optimise")
@@ -231,7 +232,7 @@ index 7777b40..bab956d 100755
              # framework builds always need to be monolithic
              if not "--enable-monolithic" in configure_opts:
                  configure_opts.append("--enable-monolithic")
-@@ -339,7 +338,7 @@ def main(scriptName, args):
+@@ -339,7 +339,7 @@ def main(scriptName, args):
              # plus the framework specific dir structure.
              prefixDir = getPrefixInFramework(options)
              configure_opts.append("--prefix=" + prefixDir)
@@ -240,7 +241,7 @@ index 7777b40..bab956d 100755
              # the framework build adds symlinks above the installDir + prefixDir folder
              # so we need to wipe from the framework root instead of inside the prefixDir.
              frameworkRootDir = os.path.abspath(os.path.join(installDir + prefixDir, "..", ".."))
-@@ -347,30 +346,30 @@ def main(scriptName, args):
+@@ -347,30 +347,30 @@ def main(scriptName, args):
                  if os.path.exists(frameworkRootDir):
                      shutil.rmtree(frameworkRootDir)
  
@@ -277,7 +278,7 @@ index 7777b40..bab956d 100755
      elif toolkit in ["msvc", "msvcProject"]:
          flags = {}
          buildDir = os.path.abspath(os.path.join(scriptDir, "..", "msw"))
-@@ -380,12 +379,12 @@ def main(scriptName, args):
+@@ -380,12 +380,12 @@ def main(scriptName, args):
              flags["wxUSE_UNICODE"] = "1"
              if VERSION < (2,9):
                  flags["wxUSE_UNICODE_MSLU"] = "1"
@@ -292,7 +293,7 @@ index 7777b40..bab956d 100755
          if options.wxpython:
              flags["wxDIALOG_UNIT_COMPATIBILITY "] = "0"
              flags["wxUSE_DEBUGREPORT"] = "0"
-@@ -400,24 +399,24 @@ def main(scriptName, args):
+@@ -400,24 +400,24 @@ def main(scriptName, args):
              # Remove this when Windows XP finally dies, or when there is a
              # solution for ticket #13116...
              flags["wxUSE_COMPILER_TLS"] = "0"
@@ -321,7 +322,7 @@ index 7777b40..bab956d 100755
          setupFile = open(os.path.join(mswIncludeDir, "setup.h"), "wb")
          setupFile.write(setupText)
          setupFile.close()
-@@ -429,7 +428,7 @@ def main(scriptName, args):
+@@ -429,7 +429,7 @@ def main(scriptName, args):
                  args.append("UNICODE=1")
                  if VERSION < (2,9):
                      args.append("MSLU=1")
@@ -330,7 +331,7 @@ index 7777b40..bab956d 100755
              if options.wxpython:
                  args.append("OFFICIAL_BUILD=1")
                  args.append("COMPILER_VERSION=%s" % getVisCVersion())
-@@ -437,12 +436,12 @@ def main(scriptName, args):
+@@ -437,12 +437,12 @@ def main(scriptName, args):
                  args.append("MONOLITHIC=0")
                  args.append("USE_OPENGL=1")
                  args.append("USE_GDIPLUS=1")
@@ -345,7 +346,7 @@ index 7777b40..bab956d 100755
              if options.shared:
                  args.append("SHARED=1")
  
-@@ -450,61 +449,61 @@ def main(scriptName, args):
+@@ -450,61 +450,61 @@ def main(scriptName, args):
                  args.append(
                      "CPPFLAGS=/I%s" %
                       os.path.join(os.environ.get("CAIRO_ROOT", ""), 'include\\cairo'))
@@ -423,7 +424,7 @@ index 7777b40..bab956d 100755
          frameworkRootDir = prefixDir
          if installDir:
              print("installDir = %s" % installDir)
-@@ -519,7 +518,7 @@ def main(scriptName, args):
+@@ -519,7 +519,7 @@ def main(scriptName, args):
          version_full = getoutput("bin/wx-config --version")
          basename = getoutput("bin/wx-config --basename")
          configname = getoutput("bin/wx-config --selected-config")
@@ -432,7 +433,7 @@ index 7777b40..bab956d 100755
          os.makedirs("Resources")
          wxplist = dict(
              CFBundleDevelopmentRegion="English",
-@@ -533,26 +532,26 @@ def main(scriptName, args):
+@@ -533,26 +533,26 @@ def main(scriptName, args):
              CFBundleShortVersionString=version_full,
              CFBundleInfoDictionaryVersion="6.0",
          )
@@ -466,7 +467,7 @@ index 7777b40..bab956d 100755
          for lib in glob.glob("lib/*.dylib"):
              if not os.path.islink(lib):
                  corelibname = "lib/lib%s-%s.0.dylib" % (basename, version)
-@@ -560,8 +559,8 @@ def main(scriptName, args):
+@@ -560,8 +560,8 @@ def main(scriptName, args):
                  run("install_name_tool -change %s %s %s" % (os.path.join(frameworkRootDir, corelibname), os.path.join(prefixDir, corelibname), lib))
  
          os.chdir("include")
@@ -477,7 +478,7 @@ index 7777b40..bab956d 100755
  #ifndef __WX_FRAMEWORK_HEADER__
  #define __WX_FRAMEWORK_HEADER__
  
-@@ -573,42 +572,42 @@ def main(scriptName, args):
+@@ -573,42 +573,42 @@ def main(scriptName, args):
          header_dir = "wx-%s/wx" % version
          for include in glob.glob(header_dir + "/*.h"):
              headers += "#include <wx/" + os.path.basename(include) + ">\n"
@@ -531,7 +532,7 @@ index 7777b40..bab956d 100755
      # adjust the install_name if needed
      if sys.platform.startswith("darwin") and \
             options.install and \
-@@ -627,7 +626,7 @@ def main(scriptName, args):
+@@ -627,7 +627,7 @@ def main(scriptName, args):
  
          if os.path.exists(options.mac_distdir):
              shutil.rmtree(options.mac_distdir)
@@ -540,7 +541,7 @@ index 7777b40..bab956d 100755
          packagedir = os.path.join(options.mac_distdir, "packages")
          os.makedirs(packagedir)
          basename = os.path.basename(prefixDir.split(".")[0])
-@@ -642,14 +641,13 @@ def main(scriptName, args):
+@@ -642,14 +642,13 @@ def main(scriptName, args):
          cmd = packageMakerPath + ' '.join(args)
          print("cmd = %s" % cmd)
          run(cmd)

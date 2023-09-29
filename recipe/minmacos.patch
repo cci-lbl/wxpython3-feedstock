@@ -1,0 +1,37 @@
+diff --git a/configure.in b/configure.in
+index f6b5875..1e0dc5d 100644
+--- a/./configure.in
++++ b/../../wxPython-src-3.0.2.0/configure.in
+@@ -1205,7 +1205,7 @@ if test "x$wxUSE_MACOSX_SDK" = "xno"; then
+     wxUSE_MACOSX_SDK=
+ elif test "x$wxUSE_MACOSX_SDK" = "xyes"; then
+     # TODO: Search for most recent SDK and use it.
+-    wxUSE_MACOSX_SDK="/Developer/SDKs/MacOSX10.4u.sdk"
++    wxUSE_MACOSX_SDK="/Applications/Xcode_13.2.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk"
+ fi
+ 
+ 
+@@ -1255,10 +1255,10 @@ dnl We need to quote the next line where we don't need macros and do need [] in
+         wxUSE_MACOSX_VERSION_MIN=
+     fi
+ elif test "x$wxUSE_MACOSX_VERSION_MIN" = "x"; then
+-    wxUSE_MACOSX_VERSION_MIN=10.5
++    wxUSE_MACOSX_VERSION_MIN=10.12
+ fi
+ 
+-if test "x$MACOSX_SDK_OPTS" != "x"; then 
++if test "x$MACOSX_SDK_OPTS" != "x"; then
+     eval "CC=\"$CC $MACOSX_SDK_OPTS\""
+     eval "CXX=\"$CXX $MACOSX_SDK_OPTS\""
+     eval "LD=\"$LD $MACOSX_SDK_OPTS\""
+@@ -7590,8 +7590,8 @@ if test "$wxUSE_MEDIACTRL" = "yes" -o "$wxUSE_MEDIACTRL" = "auto"; then
+             USE_MEDIA=0
+         fi
+ 
+-    elif test "$wxUSE_MAC" = 1; then 
+-         dnl We always have the necessary libraries under Mac 
++    elif test "$wxUSE_MAC" = 1; then
++         dnl We always have the necessary libraries under Mac
+          dnl but we need to link with it explicitly.
+          GST_LIBS="-framework QTKit"
+     fi

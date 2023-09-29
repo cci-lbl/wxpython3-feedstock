@@ -1,0 +1,15 @@
+diff --git a/src/osx/core/bitmap.cpp b/src/osx/core/bitmap.cpp
+index 3c61c17..3322b60 100644
+--- a/src/osx/core/bitmap.cpp
++++ b/src/osx/core/bitmap.cpp
+@@ -35,10 +35,6 @@ IMPLEMENT_DYNAMIC_CLASS(wxMask, wxObject)
+ #include "wx/osx/private.h"
+ #endif
+ 
+-#ifndef __WXOSX_IPHONE__
+-#include <QuickTime/QuickTime.h>
+-#endif
+-
+ CGColorSpaceRef wxMacGetGenericRGBColorSpace();
+ CGDataProviderRef wxMacCGDataProviderCreateWithMemoryBuffer( const wxMemoryBuffer& buf );
+ 

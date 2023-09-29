@@ -6,6 +6,7 @@ build:
   number: 0
   script: $RECIPE_DIR/build_osx.sh
   script_env: []
+  skip: True  # [not osx]
   string: ''
   track_features: []
 package: {name: wxpython, version: 3.0.2.0}

@@ -1,17 +1,17 @@
 diff --git a/src/osx/carbon/graphics.cpp b/src/osx/carbon/graphics.cpp
-index 4fdb74a..e788329 100644
+index 4fdb74a..ccf715e 100644
 --- a/src/osx/carbon/graphics.cpp
 +++ b/src/osx/carbon/graphics.cpp
-@@ -763,6 +763,9 @@ void wxMacCoreGraphicsBrushData::CalculateShadingValues (void *info, const CGFlo
- {
-     const GradientComponents& stops = *(GradientComponents*) info ;
+@@ -761,6 +761,9 @@ void wxMacCoreGraphicsBrushData::Apply( wxGraphicsContext* context )
  
-+    if (stops == NULL)
+ void wxMacCoreGraphicsBrushData::CalculateShadingValues (void *info, const CGFloat *in, CGFloat *out)
+ {
++    if (info == NULL)
 +        return;
 +
+     const GradientComponents& stops = *(GradientComponents*) info ;
+ 
      CGFloat f = *in;
-     if (f <= 0.0)
-     {
 @@ -1386,7 +1389,7 @@ public:
      virtual bool SetAntialiasMode(wxAntialiasMode antialias);
  

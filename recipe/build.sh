@@ -5,6 +5,9 @@
 #PYTHON=python2.7
 
 export CPPFLAGS=-D__ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=1
+export CFLAGS=-g
+export CXXFLAGS=-g
+export LDFLAGS=-g
 
 cd wxPython
 $PYTHON build-wxpython.py --prefix=$PREFIX --build_dir=../bld --osx_cocoa --install

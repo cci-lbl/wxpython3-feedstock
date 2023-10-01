@@ -1,12 +1,12 @@
 diff --git a/src/osx/carbon/graphics.cpp b/src/osx/carbon/graphics.cpp
-index 4fdb74a..ccf715e 100644
+index 4fdb74a..1fb718d 100644
 --- a/src/osx/carbon/graphics.cpp
 +++ b/src/osx/carbon/graphics.cpp
 @@ -761,6 +761,9 @@ void wxMacCoreGraphicsBrushData::Apply( wxGraphicsContext* context )
  
  void wxMacCoreGraphicsBrushData::CalculateShadingValues (void *info, const CGFloat *in, CGFloat *out)
  {
-+    if (info == NULL)
++    if (!info)
 +        return;
 +
      const GradientComponents& stops = *(GradientComponents*) info ;

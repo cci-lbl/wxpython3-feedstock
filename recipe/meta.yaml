@@ -19,6 +19,7 @@ build:
 
 requirements:
   build:
+    - libcxx =10
     - python
     - setuptools
 

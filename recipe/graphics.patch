@@ -1,18 +1,77 @@
 diff --git a/src/osx/carbon/graphics.cpp b/src/osx/carbon/graphics.cpp
-index 4fdb74a..1e4ca82 100644
+index 4fdb74a..82e79b8 100644
 --- a/src/osx/carbon/graphics.cpp
 +++ b/src/osx/carbon/graphics.cpp
-@@ -761,6 +761,9 @@ void wxMacCoreGraphicsBrushData::Apply( wxGraphicsContext* context )
+@@ -649,6 +649,7 @@ protected:
+     CGFunctionRef CreateGradientFunction(const wxGraphicsGradientStops& stops);
  
- void wxMacCoreGraphicsBrushData::CalculateShadingValues (void *info, const CGFloat *in, CGFloat *out)
- {
-+    if (!info || !in || !out)
-+        return;
+     static void CalculateShadingValues (void *info, const CGFloat *in, CGFloat *out);
++    static void ReleaseComponents (void *info);
+     virtual void Init();
+ 
+     wxMacCoreGraphicsColour m_cgColor;
+@@ -691,7 +692,7 @@ protected:
+         GradientComponent *comps;
+     };
+ 
+-    GradientComponents m_gradientComponents;
++    GradientComponents* m_gradientComponents;
+ };
+ 
+ wxMacCoreGraphicsBrushData::wxMacCoreGraphicsBrushData( wxGraphicsRenderer* renderer) : wxGraphicsObjectRefData( renderer )
+@@ -743,6 +744,14 @@ void wxMacCoreGraphicsBrushData::Init()
+     m_gradientFunction = NULL;
+     m_shading = NULL;
+     m_isShading = false;
++    m_gradientComponents = NULL;
++}
 +
-     const GradientComponents& stops = *(GradientComponents*) info ;
++void wxMacCoreGraphicsBrushData::ReleaseComponents(void *info)
++{
++    const GradientComponents* stops = (GradientComponents*) info ;
++    if ( stops )
++        delete stops;
+ }
  
-     CGFloat f = *in;
-@@ -1386,7 +1389,7 @@ public:
+ void wxMacCoreGraphicsBrushData::Apply( wxGraphicsContext* context )
+@@ -805,26 +814,27 @@ void wxMacCoreGraphicsBrushData::CalculateShadingValues (void *info, const CGFlo
+ CGFunctionRef
+ wxMacCoreGraphicsBrushData::CreateGradientFunction(const wxGraphicsGradientStops& stops)
+ {
++    m_gradientComponents = new GradientComponents();
+ 
+-    static const CGFunctionCallbacks callbacks = { 0, &CalculateShadingValues, NULL };
++    static const CGFunctionCallbacks callbacks = { 0, &CalculateShadingValues, &ReleaseComponents };
+     static const CGFloat input_value_range [2] = { 0, 1 };
+     static const CGFloat output_value_ranges [8] = { 0, 1, 0, 1, 0, 1, 0, 1 };
+ 
+-    m_gradientComponents.Init(stops.GetCount());
+-    for ( unsigned i = 0; i < m_gradientComponents.count; i++ )
++    m_gradientComponents->Init(stops.GetCount());
++    for ( unsigned i = 0; i < m_gradientComponents->count; i++ )
+     {
+         const wxGraphicsGradientStop stop = stops.Item(i);
+ 
+-        m_gradientComponents.comps[i].pos = stop.GetPosition();
++        m_gradientComponents->comps[i].pos = stop.GetPosition();
+ 
+         const wxColour col = stop.GetColour();
+-        m_gradientComponents.comps[i].red = (CGFloat) (col.Red() / 255.0);
+-        m_gradientComponents.comps[i].green = (CGFloat) (col.Green() / 255.0);
+-        m_gradientComponents.comps[i].blue = (CGFloat) (col.Blue() / 255.0);
+-        m_gradientComponents.comps[i].alpha = (CGFloat) (col.Alpha() / 255.0);
++        m_gradientComponents->comps[i].red = (CGFloat) (col.Red() / 255.0);
++        m_gradientComponents->comps[i].green = (CGFloat) (col.Green() / 255.0);
++        m_gradientComponents->comps[i].blue = (CGFloat) (col.Blue() / 255.0);
++        m_gradientComponents->comps[i].alpha = (CGFloat) (col.Alpha() / 255.0);
+     }
+ 
+-    return CGFunctionCreate ( &m_gradientComponents,  1,
++    return CGFunctionCreate ( m_gradientComponents,  1,
+                             input_value_range,
+                             4,
+                             output_value_ranges,
+@@ -1386,7 +1396,7 @@ public:
      virtual bool SetAntialiasMode(wxAntialiasMode antialias);
  
      virtual bool SetInterpolationQuality(wxInterpolationQuality interpolation);
@@ -21,7 +80,7 @@ index 4fdb74a..1e4ca82 100644
      virtual bool SetCompositionMode(wxCompositionMode op);
  
      virtual void BeginLayer(wxDouble opacity);
-@@ -1431,7 +1434,7 @@ public:
+@@ -1431,7 +1441,7 @@ public:
      {
          if ( !m_enableOffset )
              return false;
@@ -30,7 +89,7 @@ index 4fdb74a..1e4ca82 100644
          int penwidth = 0 ;
          if ( !m_pen.IsNull() )
          {
-@@ -1459,11 +1462,11 @@ public:
+@@ -1459,11 +1469,11 @@ public:
      virtual void DrawBitmap( const wxGraphicsBitmap &bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h );
  
      virtual void DrawIcon( const wxIcon &icon, wxDouble x, wxDouble y, wxDouble w, wxDouble h );
@@ -46,7 +105,7 @@ index 4fdb74a..1e4ca82 100644
  
      void SetNativeContext( CGContextRef cg );
  
-@@ -1650,7 +1653,7 @@ void wxMacCoreGraphicsContext::Flush()
+@@ -1650,7 +1660,7 @@ void wxMacCoreGraphicsContext::Flush()
  bool wxMacCoreGraphicsContext::EnsureIsValid()
  {
      CheckInvariants();
@@ -55,7 +114,7 @@ index 4fdb74a..1e4ca82 100644
      if ( !m_cgContext )
      {
          if (m_invisible)
-@@ -1760,14 +1763,14 @@ bool wxMacCoreGraphicsContext::SetInterpolationQuality(wxInterpolationQuality in
+@@ -1760,14 +1770,14 @@ bool wxMacCoreGraphicsContext::SetInterpolationQuality(wxInterpolationQuality in
  {
      if (!EnsureIsValid())
          return true;
@@ -73,7 +132,7 @@ index 4fdb74a..1e4ca82 100644
      {
          case wxINTERPOLATION_DEFAULT:
              quality = kCGInterpolationDefault;
-@@ -1962,7 +1965,7 @@ void wxMacCoreGraphicsContext::Clip( const wxRegion &region )
+@@ -1962,7 +1972,7 @@ void wxMacCoreGraphicsContext::Clip( const wxRegion &region )
      // allow usage as measuring context
      // wxASSERT_MSG( m_cgContext != NULL, "Needs a valid context for clipping" );
  #endif
@@ -82,7 +141,7 @@ index 4fdb74a..1e4ca82 100644
  }
  
  // clips drawings to the rect
-@@ -1987,7 +1990,7 @@ void wxMacCoreGraphicsContext::Clip( wxDouble x, wxDouble y, wxDouble w, wxDoubl
+@@ -1987,7 +1997,7 @@ void wxMacCoreGraphicsContext::Clip( wxDouble x, wxDouble y, wxDouble w, wxDoubl
      // wxFAIL_MSG( "Needs a valid context for clipping" );
  #endif
      }
@@ -91,7 +150,7 @@ index 4fdb74a..1e4ca82 100644
  }
  
      // resets the clipping to original extent
-@@ -2014,7 +2017,7 @@ void wxMacCoreGraphicsContext::ResetClip()
+@@ -2014,7 +2024,7 @@ void wxMacCoreGraphicsContext::ResetClip()
      // wxFAIL_MSG( "Needs a valid context for clipping" );
  #endif
      }
@@ -100,7 +159,7 @@ index 4fdb74a..1e4ca82 100644
  }
  
  void wxMacCoreGraphicsContext::StrokePath( const wxGraphicsPath &path )
-@@ -2033,7 +2036,7 @@ void wxMacCoreGraphicsContext::StrokePath( const wxGraphicsPath &path )
+@@ -2033,7 +2043,7 @@ void wxMacCoreGraphicsContext::StrokePath( const wxGraphicsPath &path )
      ((wxMacCoreGraphicsPenData*)m_pen.GetRefData())->Apply(this);
      CGContextAddPath( m_cgContext , (CGPathRef) path.GetNativePath() );
      CGContextStrokePath( m_cgContext );
@@ -109,7 +168,7 @@ index 4fdb74a..1e4ca82 100644
      CheckInvariants();
  }
  
-@@ -2088,7 +2091,7 @@ void wxMacCoreGraphicsContext::DrawPath( const wxGraphicsPath &path , wxPolygonF
+@@ -2088,7 +2098,7 @@ void wxMacCoreGraphicsContext::DrawPath( const wxGraphicsPath &path , wxPolygonF
  
      CGContextAddPath( m_cgContext , (CGPathRef) path.GetNativePath() );
      CGContextDrawPath( m_cgContext , mode );
@@ -118,7 +177,7 @@ index 4fdb74a..1e4ca82 100644
      CheckInvariants();
  }
  
-@@ -2120,7 +2123,7 @@ void wxMacCoreGraphicsContext::FillPath( const wxGraphicsPath &path , wxPolygonF
+@@ -2120,7 +2130,7 @@ void wxMacCoreGraphicsContext::FillPath( const wxGraphicsPath &path , wxPolygonF
          else
              CGContextFillPath( m_cgContext );
      }
@@ -127,7 +186,7 @@ index 4fdb74a..1e4ca82 100644
      CheckInvariants();
  }
  
-@@ -2236,7 +2239,7 @@ void wxMacCoreGraphicsContext::DrawBitmap( const wxGraphicsBitmap &bmp, wxDouble
+@@ -2236,7 +2246,7 @@ void wxMacCoreGraphicsContext::DrawBitmap( const wxGraphicsBitmap &bmp, wxDouble
          wxMacDrawCGImage( m_cgContext , &r , image );
      }
  #endif
@@ -136,7 +195,7 @@ index 4fdb74a..1e4ca82 100644
      CheckInvariants();
  }
  
-@@ -2257,7 +2260,7 @@ void wxMacCoreGraphicsContext::DrawIcon( const wxIcon &icon, wxDouble x, wxDoubl
+@@ -2257,7 +2267,7 @@ void wxMacCoreGraphicsContext::DrawIcon( const wxIcon &icon, wxDouble x, wxDoubl
          NULL , kPlotIconRefNormalFlags , icon.GetHICON() );
  #endif
      CGContextRestoreGState( m_cgContext );
@@ -145,7 +204,7 @@ index 4fdb74a..1e4ca82 100644
      CheckInvariants();
  }
  
-@@ -2322,7 +2325,7 @@ void wxMacCoreGraphicsContext::DoDrawText( const wxString &str, wxDouble x, wxDo
+@@ -2322,7 +2332,7 @@ void wxMacCoreGraphicsContext::DoDrawText( const wxString &str, wxDouble x, wxDo
          CGFloat width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
  
          CGPoint points[] = { {0.0, -2.0},  {width, -2.0} };
@@ -154,7 +213,7 @@ index 4fdb74a..1e4ca82 100644
          CGContextSetStrokeColorWithColor(m_cgContext, col);
          CGContextSetShouldAntialias(m_cgContext, false);
          CGContextSetLineWidth(m_cgContext, 1.0);
-@@ -2401,7 +2404,7 @@ void wxMacCoreGraphicsContext::GetTextExtent( const wxString &str, wxDouble *wid
+@@ -2401,7 +2411,7 @@ void wxMacCoreGraphicsContext::GetTextExtent( const wxString &str, wxDouble *wid
      if ( externalLeading )
          *externalLeading = l;
  
@@ -163,7 +222,7 @@ index 4fdb74a..1e4ca82 100644
  }
  
  void wxMacCoreGraphicsContext::GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const
-@@ -2445,10 +2448,10 @@ void wxMacCoreGraphicsContext::DrawRectangle( wxDouble x, wxDouble y, wxDouble w
+@@ -2445,10 +2455,10 @@ void wxMacCoreGraphicsContext::DrawRectangle( wxDouble x, wxDouble y, wxDouble w
      if (!EnsureIsValid())
          return;
  
@@ -177,7 +236,7 @@ index 4fdb74a..1e4ca82 100644
      if ( !m_brush.IsNull() && ((wxMacCoreGraphicsBrushData*)m_brush.GetRefData())->IsShading() )
      {
          wxGraphicsContext::DrawRectangle( x,y,w,h );
-@@ -2461,7 +2464,7 @@ void wxMacCoreGraphicsContext::DrawRectangle( wxDouble x, wxDouble y, wxDouble w
+@@ -2461,7 +2471,7 @@ void wxMacCoreGraphicsContext::DrawRectangle( wxDouble x, wxDouble y, wxDouble w
          ((wxMacCoreGraphicsBrushData*)m_brush.GetRefData())->Apply(this);
          CGContextFillRect(m_cgContext, rect);
      }
@@ -186,7 +245,7 @@ index 4fdb74a..1e4ca82 100644
      wxQuartzOffsetHelper helper( m_cgContext , ShouldOffset() );
      if ( !m_pen.IsNull() )
      {
-@@ -2662,7 +2665,7 @@ wxGraphicsContext * wxMacCoreGraphicsRenderer::CreateContext( const wxWindowDC&
+@@ -2662,7 +2672,7 @@ wxGraphicsContext * wxMacCoreGraphicsRenderer::CreateContext( const wxWindowDC&
  
          // having a cgctx being NULL is fine (will be created on demand)
          // this is the case for all wxWindowDCs except wxPaintDC

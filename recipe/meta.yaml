@@ -12,6 +12,7 @@ source:
     - mediactrl.patch
     - minmacos.patch
     - minmacos2.patch
+    - webkit.patch
 
 build:
   number: 1

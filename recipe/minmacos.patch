@@ -7,7 +7,7 @@ index f6b5875..1e0dc5d 100644
  elif test "x$wxUSE_MACOSX_SDK" = "xyes"; then
      # TODO: Search for most recent SDK and use it.
 -    wxUSE_MACOSX_SDK="/Developer/SDKs/MacOSX10.4u.sdk"
-+    wxUSE_MACOSX_SDK="/Applications/Xcode_13.2.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk"
++    wxUSE_MACOSX_SDK="/Applications/Xcode_13.2.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk"
  fi
  
  
@@ -16,7 +16,7 @@ index f6b5875..1e0dc5d 100644
      fi
  elif test "x$wxUSE_MACOSX_VERSION_MIN" = "x"; then
 -    wxUSE_MACOSX_VERSION_MIN=10.5
-+    wxUSE_MACOSX_VERSION_MIN=10.12
++    wxUSE_MACOSX_VERSION_MIN=10.9
  fi
  
 -if test "x$MACOSX_SDK_OPTS" != "x"; then 

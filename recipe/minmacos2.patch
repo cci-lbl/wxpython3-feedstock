@@ -15,7 +15,7 @@ index 648ac49..0ed1591 100755
      fi
  elif test "x$wxUSE_MACOSX_VERSION_MIN" = "x"; then
 -    wxUSE_MACOSX_VERSION_MIN=10.5
-+    wxUSE_MACOSX_VERSION_MIN=10.12
++    wxUSE_MACOSX_VERSION_MIN=10.9
  fi
  
  if test "x$MACOSX_SDK_OPTS" != "x"; then

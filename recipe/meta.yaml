@@ -14,7 +14,7 @@ source:
     - minmacos2.patch
 
 build:
-  number: 1
+  number: 2
   skip: True  # [not osx]
 
 requirements:

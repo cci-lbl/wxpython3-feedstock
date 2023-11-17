@@ -23,7 +23,6 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
   host:
-    - libcxx =10
     - python
     - setuptools
   run:

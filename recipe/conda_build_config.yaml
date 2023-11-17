@@ -1,7 +1,7 @@
 c_compiler_version:            # [unix]
-  - 9                          # [osx]
+  - 11                         # [osx]
 cxx_compiler_version:          # [unix]
-  - 9                          # [osx]
+  - 11                         # [osx]
 numpy:
   - 1.16
 python:
